@@ -1,0 +1,30 @@
+---
+title: "R Notebook"
+output:
+  html_document:
+    df_print: paged
+---
+
+# Problem Definition
+
+## Specifying the Question
+
+
+## Defining the Metric for Success
+
+
+## Understanding the context
+
+
+## Recording the Experimental Design
+1. Load , read and explore the dataset. 
+2. Clean the dataset.
+3. Perform Exploratory Data Analysis.
+    * Univariate Analysis
+    * Bivariate Analysis
+4. ...
+
+## Data Relevance
+
+
+# Data Sourcing
