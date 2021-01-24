@@ -1,0 +1,104 @@
+---
+title: "R Notebook"
+output: rmarkdown::github_document
+---
+
+
+```{r}
+data <- read.csv("http://bit.ly/CarreFourDataset")
+head(data)
+```
+
+```{r}
+data = subset(data, select = -c(Invoice.ID) )
+head(data)
+```
+
+```{r}
+# install.packages("magrittr") # package installations are only needed the first time you use it
+# install.packages("dplyr")    # alternative installation of the %>%
+library(magrittr) # needs to be run every time you start R and want to use %>%
+library(dplyr)    # alternatively, this also loads %>%
+```
+
+
+
+```{r}
+data_2 <- data %>% select(Total, gross.income, gross.margin.percentage, cogs, Unit.price, Quantity)
+data_2
+```
+
+```{r}
+# install.packages("reprex")
+library(reprex)
+```
+
+
+```{r}
+data_2 <- data_2[ - as.numeric(which(apply(data_2, 2, var) == 0))]
+```
+
+
+```{r}
+data_2.pca <- prcomp(data_2[,c(1:ncol(data_2))], center = TRUE, scale. = TRUE)
+summary(data_2.pca)
+```
+
+```{r}
+str(data_2.pca)
+```
+
+```{r}
+library(devtools)
+# install.packages("usethis")
+# install.packages("ggbiplot")
+```
+
+```{r}
+library(usethis)
+library(ggbiplot)
+```
+
+
+```{r}
+
+ggbiplot(data_2.pca)
+```
+
+```{r}
+ggbiplot(data_2.pca, labels=data$Gender, obs.scale = 1, var.scale = 1)
+```
+```{r}
+ggbiplot(data_2.pca, ellipse=TRUE, groups = data$Product.line, obs.scale = 1, var.scale = 1)
+```
+
+
+```{r}
+colnames(data)
+```
+
+
+```{r}
+duplicated_rows <- data[duplicated(data),]
+nrow(duplicated_rows)
+data <- data[!duplicated(data), ]
+duplicated_rows <- data[duplicated(data),]
+nrow(duplicated_rows)
+```
+
+
+
+```{r}
+colSums(is.na(data))
+```
+
+
+```{r}
+summary(data)
+```
+
+
+```{r}
+
+```
+

@@ -1,0 +1,45 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+data <- read.csv("http://bit.ly/CarreFourSalesDataset")
+head(data)
+```
+
+```{r}
+summary(data)
+```
+```{r}
+duplicated_rows <- data[duplicated(data),]
+nrow(duplicated_rows)
+data <- data[!duplicated(data), ]
+duplicated_rows <- data[duplicated(data),]
+nrow(duplicated_rows)
+```
+
+```{r}
+colSums(is.na(data))
+```
+
+
+```{r}
+library(tibbletime)
+```
+
+
+```{r}
+#install.packages("devtools")
+
+#devtools::install_github("tidyverse/lubridate")
+```
+
+
+
+```{r}
+library(lubridate, warn.conflicts = FALSE)
+data$Date <- mdy(data$Date)
+head(data)
+```
+

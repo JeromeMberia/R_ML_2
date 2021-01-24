@@ -1,0 +1,77 @@
+---
+title: "R Notebook"
+output: rmarkdown::github_document
+---
+
+```{r}
+# install.packages("arules")
+```
+
+
+```{r}
+library(arules)
+```
+
+
+```{r}
+path <- "http://bit.ly/SupermarketDatasetII"
+transactions<-read.transactions(path, sep = ",")
+transactions
+```
+
+```{r}
+duplicated_rows <- transactions[duplicated(transactions),]
+nrow(duplicated_rows)
+transactions <- transactions[!duplicated(transactions), ]
+duplicated_rows <- transactions[duplicated(transactions),]
+nrow(duplicated_rows)
+```
+
+```{r}
+class(transactions)
+```
+
+```{r}
+inspect(transactions[1:5])
+```
+
+```{r}
+summary(transactions)
+```
+
+```{r}
+par(mfrow = c(1, 2))
+
+# plot the frequency of items
+itemFrequencyPlot(transactions, topN = 10, col="darkgreen")
+```
+
+```{r}
+rules <- apriori (transactions, parameter = list(supp = 0.001, conf = 0.8))
+rules
+```
+
+```{r}
+summary(rules)
+```
+
+```{r}
+inspect(rules[1:5])
+```
+
+```{r}
+rules<-sort(rules, by="confidence", decreasing=TRUE)
+inspect(rules[1:5])
+```
+
+```{r}
+# Subset the rules
+spaghetti <- subset(rules, subset = lhs %pin% "spaghetti")
+
+# Order by confidence
+spaghetti<-sort(spaghetti, by="confidence", decreasing=TRUE)
+
+# inspect top 5
+inspect(spaghetti[15:19])
+```
+
