@@ -11,6 +11,7 @@ head(data)
 ```{r}
 summary(data)
 ```
+
 ```{r}
 duplicated_rows <- data[duplicated(data),]
 nrow(duplicated_rows)
@@ -22,11 +23,24 @@ nrow(duplicated_rows)
 ```{r}
 colSums(is.na(data))
 ```
+```{r}
+data <- data[order(data$Date),]
+```
+
+
 
 
 ```{r}
-library(tibbletime)
+data <- aggregate(list(Sales=data$Sales), by=list(Date=data$Date), FUN=sum)
+head(data)
 ```
+
+
+```{r}
+#data <- as.data.frame(data)
+head(data)
+```
+
 
 
 ```{r}
@@ -38,8 +52,39 @@ library(tibbletime)
 
 
 ```{r}
-library(lubridate, warn.conflicts = FALSE)
+library(usethis)
+library(devtools)
+library(lubridate)
 data$Date <- mdy(data$Date)
 head(data)
 ```
 
+```{r}
+#install.packages("anomalize")
+```
+
+
+
+```{r}
+library(tidyverse)
+library(tibbletime)
+library(anomalize)
+```
+
+```{r}
+data <- tbl_time(data, index=Date)
+head(data)
+```
+
+
+
+
+
+
+```{r}
+data %>% 
+  time_decompose(Sales) %>%
+  anomalize(remainder) %>% 
+  plot_anomalies(alpha_dots = 0.5)
+  
+```
