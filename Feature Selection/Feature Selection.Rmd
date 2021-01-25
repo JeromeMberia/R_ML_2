@@ -1,13 +1,128 @@
 ---
 title: "R Notebook"
-output: html_notebook
+output: rmarkdown::github_document
 ---
 
+# Filter Methods
 ```{r}
 data <- read.csv("http://bit.ly/CarreFourDataset")
 head(data)
 ```
 
 ```{r}
+data = subset(data, select = -c(Invoice.ID) )
+```
+
+```{r}
+library(usethis)
+library(devtools)
+library(lubridate)
+data$Date <- mdy(data$Date)
+data$Time <- hm(data$Time)
+data$hour <- hour(data$Time)
+data$day.of.the.week <- wday(data$Date, label = FALSE)
+data$day <- mday(data$Date)
+data$month <- month(data$Date, label = FALSE)
+
+data = subset(data, select = -c(Time) )
+data = subset(data, select = -c(Date) )
+```
+
+
+```{r}
+# install.packages("CatEncoders")
+library(CatEncoders)
+```
+
+
+```{r}
+lenc <- LabelEncoder.fit(data$Payment)
+data$Payment <- transform(lenc, data$Payment)
+lenc <- LabelEncoder.fit(data$Customer.type)
+data$Customer.type <- transform(lenc, data$Customer.type)
+lenc <- LabelEncoder.fit(data$Product.line)
+data$Product.line <- transform(lenc, data$Product.line)
+lenc <- LabelEncoder.fit(data$Branch)
+data$Branch <- transform(lenc, data$Branch)
+lenc <- LabelEncoder.fit(data$Gender)
+data$Gender <- transform(lenc, data$Gender)
+```
+
+
+```{r}
 colnames(data)
 ```
+
+```{r}
+# install.packages("caret")
+library(caret)
+```
+
+
+```{r}
+# install.packages("corrplot")
+```
+
+
+```{r}
+library(corrplot)
+```
+
+```{r}
+summary(data)
+```
+
+```{r}
+colSums(is.na(data))
+```
+```{r}
+data.num <- subset(data, select = -c(Branch, Customer.type, Gender, Product.line, hour, day.of.the.week, day, month, Rating, gross.margin.percentage, Payment) )
+head(data.num)
+```
+
+```{r}
+normalize <- function(x){
+  return ((x-min(x)) / (max(x)-min(x)))
+}
+```
+
+
+```{r}
+for(i in 1:ncol(data.num)) {       # for-loop over columns
+  data.num[, i]<- normalize(data.num[, i])
+}
+```
+
+```{r}
+
+correlationMatrix <- cor(data.num)
+
+# Find attributes that are highly correlated
+# ---
+#
+highlyCorrelated <- findCorrelation(correlationMatrix, cutoff=0.75)
+
+# Highly correlated attributes
+# ---
+# 
+highlyCorrelated
+
+names(data.num[,highlyCorrelated])
+```
+
+```{r}
+data.num.cor<-data.num[-highlyCorrelated]
+
+# Performing our graphical comparison
+# ---
+# 
+par(mfrow = c(1, 1))
+corrplot(correlationMatrix, order = "hclust")
+corrplot(cor(data.num.cor), order = "hclust")
+```
+
+
+
+
+
+
